@@ -1,25 +1,52 @@
-🎮 Gamer Revival Network
+# 🎮 Gamer Revival Network
 
-Welcome to Gamer Revival Network (GRN) — a gaming-focused network built to bring players together, discover new games, and keep the gaming community active and connected.
+> **Welcome to Gamer Revival Network!**
+> A growing gaming network focused on bringing together games, communities, and different gaming sites in one place.
 
-GRN provides access to a variety of gaming experiences, resources, and different gaming sites all in one place. Whether you're looking for unblocked games, new places to play, community updates, or just somewhere to hang out with other gamers, Gamer Revival Network is here to help.
+## 🌐 About
 
-🌐 What We Offer
-🎮 Unblocked Games (UBG) — A collection of games designed for quick and easy access.
-🌎 Multiple Gaming Sites — Explore different sites and projects within the Gamer Revival Network.
-💬 Discord Community — Join our Discord to chat, share games, get updates, and connect with other members.
-🛠️ Gaming Projects — Follow our ongoing projects, updates, and new features.
-🚀 Regular Updates — New games, sites, features, and improvements are added over time.
-💬 Join the Community
+**Gamer Revival Network (GRN)** is a gaming community and network built for players who want to *play, discover, and connect.*
 
-Want to stay updated or meet other gamers?
+Our network includes a variety of projects and gaming sites, including **unblocked games (UBG)**, community resources, and other gaming-related projects.
 
-Discord: https://bit.ly/3Tfist5
+## 🎯 What We Offer
 
-Join the community, share suggestions, find new games, and keep up with everything happening across the Gamer Revival Network.
+- 🎮 **Unblocked Games** — Play a variety of games through our gaming sites.
+- 🌎 **Multiple Sites** — Explore different websites and projects across the GRN network.
+- 💬 **Discord Community** — Chat with other gamers, share ideas, and stay updated.
+- 🛠️ **Gaming Projects** — Check out our current and upcoming projects.
+- 🚀 **Regular Updates** — New games, features, and sites are added over time.
 
-🔗 The Network
+## 💬 Join Our Discord
 
-Gamer Revival Network is more than just one website. It's a growing collection of gaming projects and sites created to give players more ways to play, connect, and discover something new.
+Want to join the community?
 
-Play. Connect. Discover. Revive. 🎮
+🔗 https://bit.ly/3Tfist5
+
+In our Discord, you can:
+
+- 💬 Chat with other members
+- 🎮 Discover new games
+- 📢 Get updates and announcements
+- 💡 Suggest new features
+- 🐛 Report bugs
+- 🤝 Meet other gamers
+
+## 🌐 The GRN Network
+
+Gamer Revival Network is more than just one website.
+
+We are building a **network of gaming sites and projects** designed to give players more ways to play, discover new games, and connect with the community.
+
+> **Play. Connect. Discover. Revive.** 🎮
+
+## 📜 License
+
+This project is **All Rights Reserved**.
+
+The source code may be viewed for personal and educational purposes. Copying, modifying, redistributing, or using this project without permission is not allowed.
+
+---
+
+⭐ Thanks for checking out **Gamer Revival Network!**
+```
