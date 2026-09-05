@@ -49,4 +49,3 @@ The source code may be viewed for personal and educational purposes. Copying, mo
 ---
 
 ⭐ Thanks for checking out **Gamer Revival Network!**
-```
