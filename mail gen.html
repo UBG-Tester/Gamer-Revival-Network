@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Burner Mail</title>
+
+<style>
+*{
+box-sizing:border-box;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+margin:0;
+background:#111827;
+color:white;
+height:100vh;
+display:flex;
+flex-direction:column;
+}
+
+header{
+background:#1f2937;
+padding:15px;
+display:flex;
+gap:10px;
+align-items:center;
+}
+
+button{
+background:#3b82f6;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+cursor:pointer;
+}
+
+button:hover{
+background:#2563eb;
+}
+
+#email{
+font-weight:bold;
+font-size:18px;
+flex:1;
+}
+
+main{
+display:grid;
+grid-template-columns:350px 1fr;
+height:100%;
+overflow:hidden;
+}
+
+#list{
+background:#0f172a;
+overflow:auto;
+border-right:1px solid #333;
+}
+
+.mail{
+padding:14px;
+border-bottom:1px solid #222;
+cursor:pointer;
+}
+
+.mail:hover{
+background:#1e293b;
+}
+
+.subject{
+font-weight:bold;
+}
+
+.from{
+font-size:13px;
+color:#9ca3af;
+}
+
+.time{
+font-size:12px;
+color:#666;
+}
+
+#viewer{
+padding:20px;
+overflow:auto;
+}
+
+iframe{
+width:100%;
+height:75vh;
+border:none;
+background:white;
+}
+
+pre{
+white-space:pre-wrap;
+}
+
+.empty{
+padding:20px;
+color:#888;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div id="email">Creating...</div>
+
+<button onclick="copyEmail()">Copy</button>
+
+<button onclick="newInbox()">New Inbox</button>
+
+</header>
+
+<main>
+
+<div id="list">
+<div class="empty">Waiting for mailbox...</div>
+</div>
+
+<div id="viewer">
+<h2>Inbox</h2>
+<p>Select an email.</p>
+</div>
+
+</main>
+
+<script>
+
+const API="https://api.mail.tm";
+
+let token="";
+let address="";
+let password="";
+let poller=null;
+
+async function api(url,options={}){
+
+options.headers=options.headers||{};
+
+if(token)
+options.headers.Authorization="Bearer "+token;
+
+let r=await fetch(API+url,options);
+
+if(!r.ok)
+throw new Error(await r.text());
+
+return await r.json();
+
+}
+
+function randomName(){
+
+return "html5"+Math.random().toString(36).substring(2,12);
+
+}
+
+function randomPass(){
+
+return crypto.randomUUID();
+
+}
+
+async function createMailbox(){
+
+clearInterval(poller);
+
+document.getElementById("list").innerHTML="<div class='empty'>Creating...</div>";
+
+let domains=await api("/domains");
+
+let domain=domains["hydra:member"][0].domain;
+
+address=randomName()+"@"+domain;
+password=randomPass();
+
+await fetch(API+"/accounts",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+address,
+password
+})
+});
+
+let login=await fetch(API+"/token",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+address,
+password
+})
+});
+
+let j=await login.json();
+
+token=j.token;
+
+document.getElementById("email").textContent=address;
+
+loadMessages();
+
+poller=setInterval(loadMessages,5000);
+
+}
+
+async function loadMessages(){
+
+let inbox=await api("/messages");
+
+let msgs=inbox["hydra:member"];
+
+let list=document.getElementById("list");
+
+if(msgs.length===0){
+
+list.innerHTML="<div class='empty'>No mail yet...</div>";
+return;
+
+}
+
+list.innerHTML="";
+
+msgs.forEach(m=>{
+
+let div=document.createElement("div");
+
+div.className="mail";
+
+div.innerHTML=`
+<div class="subject">${escape(m.subject||"(No subject)")}</div>
+<div class="from">${escape(m.from.address)}</div>
+<div class="time">${new Date(m.createdAt).toLocaleString()}</div>
+`;
+
+div.onclick=()=>openMessage(m.id);
+
+list.appendChild(div);
+
+});
+
+}
+
+async function openMessage(id){
+
+let m=await api("/messages/"+id);
+
+let html=(m.html && m.html.length)?m.html[0]:null;
+
+if(html){
+
+document.getElementById("viewer").innerHTML=
+`<h2>${escape(m.subject)}</h2>
+<p><b>From:</b> ${escape(m.from.address)}</p>
+<iframe></iframe>`;
+
+let frame=document.querySelector("iframe");
+
+frame.srcdoc=html;
+
+}else{
+
+document.getElementById("viewer").innerHTML=
+`<h2>${escape(m.subject)}</h2>
+<p><b>From:</b> ${escape(m.from.address)}</p>
+<pre>${escape(m.text||"(empty)")}</pre>`;
+
+}
+
+}
+
+function escape(str){
+
+return String(str)
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;");
+
+}
+
+function copyEmail(){
+
+navigator.clipboard.writeText(address);
+
+alert("Copied!");
+
+}
+
+function newInbox(){
+
+token="";
+createMailbox();
+
+}
+
+createMailbox();
+
+</script>
+
+</body>
+</html>
