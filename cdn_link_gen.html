@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CDN Link Generator</title>
+<style>
+  html, body { margin: 0; padding: 0; background: #0d0f0e; }
+</style>
+</head>
+<body>
+<div id="cdn-link-generator-root" style="--bg:#0d0f0e; --panel:#15181666; --border:#2a2f2c; --green:#22e07a; --green-dim:#1a9d57; --text:#e7ece9; --text-dim:#8b938e; --mono: 'JetBrains Mono','Fira Code',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;">
+<style>
+  #cdn-link-generator-root {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    padding: 32px 20px;
+    min-height: 100%;
+    box-sizing: border-box;
+  }
+  #cdn-link-generator-root * { box-sizing: border-box; }
+  .clg-wrap { max-width: 640px; margin: 0 auto; }
+  .clg-title {
+    color: var(--green);
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 6px 0;
+    letter-spacing: 0.2px;
+  }
+  .clg-sub {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin: 0 0 28px 0;
+    line-height: 1.5;
+  }
+  .clg-sub a { color: var(--green-dim); text-decoration: none; }
+  .clg-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 560px) {
+    .clg-row { grid-template-columns: 1fr; }
+  }
+  .clg-field label {
+    display: block;
+    font-size: 12px;
+    color: #b7bdb9;
+    margin-bottom: 7px;
+  }
+  .clg-field input {
+    width: 100%;
+    background: #17201b;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--green);
+    font-family: var(--mono);
+    font-size: 13.5px;
+    padding: 10px 12px;
+    outline: none;
+    transition: border-color .15s ease;
+  }
+  .clg-field input::placeholder { color: #5c645f; }
+  .clg-field input:focus { border-color: var(--green-dim); }
+  .clg-field.full { margin-bottom: 18px; }
+  .clg-btn {
+    width: 100%;
+    background: var(--green);
+    color: #06120a;
+    border: none;
+    border-radius: 6px;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+    padding: 13px 0;
+    cursor: pointer;
+    margin: 6px 0 30px 0;
+    transition: filter .15s ease, transform .05s ease;
+  }
+  .clg-btn:hover { filter: brightness(1.08); }
+  .clg-btn:active { transform: scale(0.997); }
+  .clg-results-title {
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 700;
+    margin: 0 0 14px 0;
+  }
+  .clg-results { display: flex; flex-direction: column; gap: 8px; }
+  .clg-url-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: #101512;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+  }
+  .clg-url-text {
+    color: var(--green);
+    font-size: 12.5px;
+    word-break: break-all;
+    line-height: 1.4;
+  }
+  .clg-copy {
+    flex: 0 0 auto;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 5px;
+    padding: 6px 9px;
+    font-family: var(--mono);
+    font-size: 11px;
+    cursor: pointer;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .clg-copy:hover { color: var(--green); border-color: var(--green-dim); }
+  .clg-copy.copied { color: var(--green); border-color: var(--green-dim); }
+  .clg-empty {
+    color: var(--text-dim);
+    font-size: 13px;
+    padding: 18px 0;
+  }
+</style>
+
+<div class="clg-wrap">
+  <p class="clg-title">CDN Link Generator</p>
+  <p class="clg-sub">Quickly generate alternate multi-CDN endpoint arrays from your open GitHub repository assets.</p>
+
+  <div class="clg-row">
+    <div class="clg-field">
+      <label for="clg-u">Username (u):</label>
+      <input id="clg-u" type="text" placeholder="octocat" />
+    </div>
+    <div class="clg-field">
+      <label for="clg-r">Repository (r):</label>
+      <input id="clg-r" type="text" placeholder="my-repo" />
+    </div>
+    <div class="clg-field">
+      <label for="clg-b">Branch/Tag (b):</label>
+      <input id="clg-b" type="text" placeholder="main" />
+    </div>
+  </div>
+
+  <div class="clg-field full">
+    <label for="clg-p">File Path (p):</label>
+    <input id="clg-p" type="text" placeholder="images/logo.svg" />
+  </div>
+
+  <div class="clg-field full">
+    <label for="clg-f">Sub-folder/Suffix (f):</label>
+    <input id="clg-f" type="text" placeholder="Optional suffix..." />
+  </div>
+
+  <button class="clg-btn" id="clg-generate">Generate Links</button>
+
+  <p class="clg-results-title">Generated URLs:</p>
+  <div class="clg-results" id="clg-results">
+    <p class="clg-empty">Fill in the fields above and click Generate Links.</p>
+  </div>
+</div>
+</div>
+
+<script>
+(function () {
+  const root = document.getElementById('cdn-link-generator-root');
+  const $ = (id) => root.querySelector(id);
+
+  const uInput = $('#clg-u');
+  const rInput = $('#clg-r');
+  const bInput = $('#clg-b');
+  const pInput = $('#clg-p');
+  const fInput = $('#clg-f');
+  const results = $('#clg-results');
+  const btn = $('#clg-generate');
+
+  function clean(v, fallback) {
+    v = (v || '').trim();
+    v = v.replace(/^\/+|\/+$/g, '');
+    return v || fallback;
+  }
+
+  // CDNs confirmed to serve .html files with a working, renderable response.
+  const HTML_WORKING_HOSTS = [
+    'esm.sh',
+    'cdn.esm.sh',
+    'raw.esm.sh',
+    'cdn.staticdelivr.com',
+    'raw.githack.com',
+    'rawcdn.githack.com'
+  ];
+
+  function buildUrls(u, r, b, p, f) {
+    const path = f ? (p + '/' + f).replace(/\/+/g, '/') : p;
+    return [
+      `https://cdn.jsdelivr.net/gh/${u}/${r}@${b}/${path}`,
+      `https://quantil.jsdelivr.net/gh/${u}/${r}@${b}/${path}`,
+      `https://originfastly.jsdelivr.net/gh/${u}/${r}@${b}/${path}`,
+      `https://fastly.jsdelivr.net/gh/${u}/${r}@${b}/${path}`,
+      `https://gcore.jsdelivr.net/gh/${u}/${r}@${b}/${path}`,
+      `https://testingcf.jsdelivr.net/gh/${u}/${r}@${b}/${path}`,
+      `https://jsdelivr.b-cdn.net/gh/${u}/${r}@${b}/${path}`,
+      `https://esm.sh/gh/${u}/${r}@${b}/${path}`,
+      `https://cdn.esm.sh/gh/${u}/${r}@${b}/${path}`,
+      `https://raw.esm.sh/gh/${u}/${r}@${b}/${path}`,
+      `https://cdn.statically.io/gh/${u}/${r}/${b}/${path}`,
+      `https://cdn.staticdelivr.com/gh/${u}/${r}/${b}/${path}`,
+      `https://raw.githack.com/${u}/${r}/${b}/${path}`,
+      `https://rawcdn.githack.com/${u}/${r}/${b}/${path}`,
+      `https://jsd.onmicrosoft.cn/gh/${u}/${r}/${path}`,
+      `https://cdn.jsdmirror.com/gh/${u}/${r}/${path}`
+    ];
+  }
+
+  function hostOf(url) {
+    try { return new URL(url).hostname; } catch (e) { return ''; }
+  }
+
+  function render(urls) {
+    results.innerHTML = '';
+    urls.forEach((url, i) => {
+      const row = document.createElement('div');
+      row.className = 'clg-url-row';
+
+      const left = document.createElement('div');
+      left.style.display = 'flex';
+      left.style.flexDirection = 'column';
+      left.style.gap = '4px';
+      left.style.minWidth = '0';
+
+      const text = document.createElement('span');
+      text.className = 'clg-url-text';
+      text.textContent = url;
+      left.appendChild(text);
+
+      if (HTML_WORKING_HOSTS.includes(hostOf(url))) {
+        const note = document.createElement('span');
+        note.textContent = 'html working ✅';
+        note.style.fontSize = '11px';
+        note.style.color = '#22e07a';
+        note.style.opacity = '0.85';
+        left.appendChild(note);
+      }
+
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'clg-copy';
+      copyBtn.textContent = 'Copy';
+      copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(url).then(() => {
+          copyBtn.textContent = 'Copied';
+          copyBtn.classList.add('copied');
+          setTimeout(() => {
+            copyBtn.textContent = 'Copy';
+            copyBtn.classList.remove('copied');
+          }, 1200);
+        });
+      });
+
+      row.appendChild(left);
+      row.appendChild(copyBtn);
+      results.appendChild(row);
+    });
+  }
+
+  btn.addEventListener('click', () => {
+    const u = clean(uInput.value, 'octocat');
+    const r = clean(rInput.value, 'my-repo');
+    const b = clean(bInput.value, 'main');
+    const p = clean(pInput.value, 'images/logo.svg');
+    const f = clean(fInput.value, '');
+    render(buildUrls(u, r, b, p, f));
+  });
+
+  [uInput, rInput, bInput, pInput, fInput].forEach((el) => {
+    el.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') btn.click();
+    });
+  });
+})();
+</script>
+</body>
+</html>
